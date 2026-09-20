@@ -69,7 +69,9 @@ Each of these touches the running session and waits for the user's explicit
 confirmation in chat, one command at a time:
 
 - `hyprctl output create/remove` and workspace moves (`hyprctl dispatch
-  moveworkspacetomonitor|workspace|focusmonitor`).
+  "hl.dsp.focus({ workspace = ... | monitor = ... })"` and
+  `"hl.dsp.workspace.move({ workspace = ..., monitor = ... })"` — Hyprland
+  0.56 replaced the legacy `dispatch <name> <args>` interface).
 - Starting `wayvnc` against the real compositor, and any VNC client
   round-trip.
 - `systemctl --user daemon-reload` and `enable/start/restart` of the

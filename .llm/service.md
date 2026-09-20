@@ -49,6 +49,15 @@ When monitor or workspace names change in the script, the service and
 installer need no change unless a path or placeholder moves — but this file
 must be updated in the same step (its own commit on `master`).
 
+## Dispatch API (0.56+)
+
+Hyprland 0.56 removed the legacy `hyprctl dispatch <name> <args>` interface.
+The script drives the session through the Lua dispatcher API instead:
+`hl.dsp.focus({ workspace = ... })` switches workspace,
+`hl.dsp.workspace.move({ workspace = ..., monitor = ... })` moves a workspace
+to a monitor, and `hl.dsp.focus({ monitor = ... })` focuses a monitor. This
+is a hard floor: the script no longer works on pre-0.56 Hyprland.
+
 ## Lifecycle notes
 
 - `wayvnc` runs as a tracked background child the script waits on; stopping
