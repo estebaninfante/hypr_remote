@@ -16,8 +16,8 @@ cleanup() {
   if [[ -n "$WAYVNC_PID" ]] && kill -0 "$WAYVNC_PID" 2>/dev/null; then
     kill "$WAYVNC_PID" 2>/dev/null || true
   fi
-  hyprctl dispatch moveworkspacetomonitor "$VIRTUAL_WORKSPACE" "$REAL_MONITOR"
-  hyprctl dispatch focusmonitor "$REAL_MONITOR"
+  hyprctl dispatch "hl.dsp.workspace.move({ workspace = '$VIRTUAL_WORKSPACE', monitor = '$REAL_MONITOR' })"
+  hyprctl dispatch "hl.dsp.focus({ monitor = '$REAL_MONITOR' })"
 }
 
 trap cleanup INT TERM EXIT
@@ -28,11 +28,11 @@ main() {
   hyprctl output create headless "$VIRTUAL_MONITOR"
   sleep 0.5
 
-  hyprctl dispatch workspace "$VIRTUAL_WORKSPACE"
-  hyprctl dispatch moveworkspacetomonitor "$VIRTUAL_WORKSPACE" "$VIRTUAL_MONITOR"
+  hyprctl dispatch "hl.dsp.focus({ workspace = '$VIRTUAL_WORKSPACE' })"
+  hyprctl dispatch "hl.dsp.workspace.move({ workspace = '$VIRTUAL_WORKSPACE', monitor = '$VIRTUAL_MONITOR' })"
   sleep 0.2
 
-  hyprctl dispatch focusmonitor "$VIRTUAL_MONITOR"
+  hyprctl dispatch "hl.dsp.focus({ monitor = '$VIRTUAL_MONITOR' })"
 
   wayvnc "$VNC_BIND" "$VNC_PORT" "$VIRTUAL_MONITOR" &
   WAYVNC_PID=$!
