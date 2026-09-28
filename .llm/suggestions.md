@@ -29,4 +29,9 @@ escalates them to `.llm/todo.md` (see `AGENTS.md` → Instruction precedence).
 
 ## Open suggestions
 
+- Two checkouts of this repo exist on the host: `~/developing/hypr_remote`
+  (tracked, authoritative) and `~/Projects/hypr_remote` (stale, carries
+  uncommitted 0.56 edits that are now landed here). Installing or committing
+  from the Projects copy silently diverges — retire it or redirect it.
+
 
