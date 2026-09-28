@@ -45,15 +45,17 @@ Never check steps off — remove them. Do not let the queue rot.
 
 ## What it is
 
-- `hypr_remote.sh`: creates headless monitor `HEADLESS-2`, moves workspace
-  10 onto it, starts `wayvnc 0.0.0.0 5900 HEADLESS-2`, and on exit kills
-  only `wayvnc` and moves the workspace back to the real monitor
-  (`HDMI-A-1`). See `.llm/service.md` for the current values.
-- `hypr_remote.service`: a user systemd unit (`WantedBy=graphical.target`,
-  `After=hyprland.service graphical.target`) running the script from
+- `hypr_remote.sh`: creates headless monitor `HEADLESS-2`, records the
+  active workspace, moves workspace 10 onto it, starts `wayvnc 127.0.0.1
+  5900 HEADLESS-2`, and on exit kills only `wayvnc`, moves the workspace
+  back to the real monitor (`HDMI-A-1`), and restores the recorded
+  workspace. See `.llm/service.md` for the current values.
+- `hypr_remote.service`: a user systemd unit (`WantedBy=graphical-session.target`,
+  `After=graphical-session.target`) running the script from
   `%h/.local/bin/hypr_remote.sh`. `RESU` is a placeholder for the user;
   `GDX` for the runtime dir — never committed with real values.
-- `install.sh`: copies the unit and script into the user's home
+- `install.sh`: requires `wayvnc`, `hyprctl` and `jq`, then copies the unit
+  and script into the user's home
   (`~/.config/systemd/user/`, `~/.local/bin/`), substituting the
   placeholders, then `systemctl --user daemon-reload`. User scope only —
   never system scope, never sudo.

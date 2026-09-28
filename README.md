@@ -12,8 +12,9 @@ This project provides scripts and a systemd service to create a virtual monitor 
 
 ## Prerequisites
 
-- Hyprland window manager
+- Hyprland window manager (0.55+ Lua mode)
 - WayVNC installed
+- `jq` installed
 - Systemd for service management (user scope — no sudo needed)
 
 ## Installation
@@ -31,13 +32,13 @@ This project provides scripts and a systemd service to create a virtual monitor 
 
 ## How It Works
 
-- **Service (`hypr_remote.service`)**: Runs `hypr_remote.sh` as a systemd *user* service (`WantedBy=graphical.target`), starting after Hyprland and the graphical target are ready. `RESU` in the template is substituted with your username at install time.
+- **Service (`hypr_remote.service`)**: Runs `hypr_remote.sh` as a systemd *user* service wanted by `graphical-session.target`, so it starts with the graphical session. `RESU` in the template is substituted with your username at install time.
 - **Script (`hypr_remote.sh`)**:
   - Removes any stale `HEADLESS-2` output, then creates a headless monitor (`HEADLESS-2`).
-  - Moves workspace 10 to the virtual monitor and focuses it so the served output shows the scratch workspace.
+  - Records the active workspace, moves workspace 10 onto the virtual monitor through Hyprland's Lua dispatch API (`hl.dsp.focus`, `hl.dsp.workspace.move`), then returns the local session to the workspace and focus it had before the run.
   - Starts WayVNC on `127.0.0.1:5900` for remote access to the virtual monitor (localhost-only by default; override with `HYPR_REMOTE_BIND`).
-  - Cleans up on exit by moving the workspace back and stopping WayVNC.
-- **Install Script (`install.sh`)**: Copies the unit to `~/.config/systemd/user/` and the script to `~/.local/bin/`, substituting the `RESU` placeholder, then reloads the user daemon. Builds the substituted unit in a temp dir so the repo stays clean.
+  - Cleans up on exit by moving the workspace back to the real monitor, restoring the recorded workspace, and stopping WayVNC.
+- **Install Script (`install.sh`)**: Checks `wayvnc`, `hyprctl` and `jq`, copies the unit to `~/.config/systemd/user/` and the script to `~/.local/bin/`, substituting the `RESU` placeholder, then reloads the user daemon. Builds the substituted unit in a temp dir so the repo stays clean.
 
 ## Usage
 
