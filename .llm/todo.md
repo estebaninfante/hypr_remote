@@ -20,6 +20,39 @@ Sizes: S <1 day, M 1–3 days, L 3+ days.
 
 ## Open steps
 
+- [ ] **3.1 port script dispatch to the 0.56 Lua API** (S). `hypr_remote.sh`
+  still calls the removed `hyprctl dispatch <name> <args>` interface; on
+  Lua-mode Hyprland that aborts the run with `')' expected near ...` and
+  exit 7. Rewrite the calls as `hl.dsp.focus({ workspace = N })`,
+  `hl.dsp.workspace.move({ workspace = N, monitor = 'X' })` and
+  `hl.dsp.focus({ monitor = 'X' })`, and capture the active workspace before
+  the run so startup and cleanup restore it instead of switching the local
+  monitor to an unrelated workspace. Done when: `bash -n` and `shellcheck`
+  are clean and a dry read of the ordering shows the workspace lands on the
+  headless output while the local session keeps its own workspace and focus.
+
+- [ ] **3.2 retarget the unit to `graphical-session.target`** (S). The unit's
+  `WantedBy=graphical.target` and `After=hyprland.service` resolve to nothing
+  in user scope (no user `graphical.target`; the session runs under
+  `wayland-wm@hyprland.desktop`), so the unit can never be started by the
+  target it wants. Done when: both directives name `graphical-session.target`
+  and `systemd-analyze verify` is clean.
+
+- [ ] **3.3 declare the `jq` prerequisite in `install.sh`** (S). The script
+  reads `hyprctl activeworkspace -j` and needs `jq`, which the installer does
+  not check the way it checks `wayvnc` and `hyprctl`. Done when: a missing
+  `jq` fails the install with the same message shape and `bash -n` +
+  `shellcheck` are clean.
+
+- [ ] **3.4 reconcile the README** (S). The README still describes the legacy
+  dispatch calls, the pre-0.56 focus-stealing lifecycle, and the
+  `graphical.target` unit. Done when: it matches the script and unit as
+  landed by 3.1/3.2.
+
+- [ ] **3.5 reconcile `service.md`** (S). The domain notes still document
+  `WantedBy=graphical.target`, `After=hyprland.service`, and a lifecycle that
+  focuses the headless monitor before serving. Done when: the unit targets
+  and the focus/restore lifecycle match 3.1/3.2.
 
 
 
