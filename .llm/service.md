@@ -5,19 +5,22 @@ from `AGENTS.md`; on a conflict the constitution wins.
 
 ```text
 hypr_remote.sh          lifecycle: create output, place workspace, serve, clean up
+  hyprctl output remove HEADLESS-2       (stale output only; absence ignored)
   hyprctl output create headless HEADLESS-2
-  move workspace 10 onto HEADLESS-2
-  wayvnc 0.0.0.0 5900 HEADLESS-2        (backgrounded, PID tracked, waited on)
+  record the active workspace, move workspace 10 onto HEADLESS-2,
+  restore the recorded workspace and focus
+  wayvnc 127.0.0.1 5900 HEADLESS-2       (backgrounded, PID tracked, waited on)
   on INT/TERM/EXIT: kill only the tracked PID (no-op unless serving
-  started), move workspace 10 back to HDMI-A-1
+  started), move workspace 10 back to HDMI-A-1, then restore the recorded
+  workspace — or focus HDMI-A-1 when the recording is unusable
 
-hypr_remote.service     user unit: WantedBy=graphical.target,
-                        After=hyprland.service graphical.target,
+hypr_remote.service     user unit: WantedBy=graphical-session.target,
+                        After=graphical-session.target,
                         ExecStart=%h/.local/bin/hypr_remote.sh,
                         User=RESU placeholder
 
-install.sh              deploy: substitute RESU/GDX from live env,
-                        copy unit -> ~/.config/systemd/user/,
+install.sh              deploy: require wayvnc/hyprctl/jq, substitute RESU/GDX
+                        from live env, copy unit -> ~/.config/systemd/user/,
                         copy script -> ~/.local/bin/,
                         systemctl --user daemon-reload
 ```
@@ -64,8 +67,12 @@ is a hard floor: the script no longer works on pre-0.56 Hyprland.
   the unit (or a TERM/INT) fires the trap, which kills only that PID and
   returns the workspace to the real monitor. The trap is a no-op if serving
   never started, and idempotent across repeated signals.
-- The script focuses the headless monitor before starting `wayvnc` so the
-  served output has the scratch workspace visible.
+- The script records the active workspace (`hyprctl activeworkspace -j` +
+  `jq`) before moving the scratch workspace, then restores that workspace
+  and focus. Starting or stopping the unit never switches the local monitor
+  to an unrelated workspace. WayVNC captures the headless output's active
+  workspace, so the headless monitor never needs to hold focus for the
+  remote view to show workspace 10.
 - WayVNC is a prerequisite binary, not part of this repo. Empty/missing
   output or a dead workspace at serve time means the remote client sees
   nothing — reason through the `hyprctl` ordering dry before changing it.
