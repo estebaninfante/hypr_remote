@@ -20,11 +20,6 @@ Sizes: S <1 day, M 1–3 days, L 3+ days.
 
 ## Open steps
 
-- [ ] **3.5 reconcile `service.md`** (S). The domain notes still document
-  `WantedBy=graphical.target`, `After=hyprland.service`, and a lifecycle that
-  focuses the headless monitor before serving. Done when: the unit targets
-  and the focus/restore lifecycle match 3.1/3.2.
-
 - [ ] **3.6 reconcile `AGENTS.md`** (S). The constitution's "What it is"
   section still names `graphical.target`/`hyprland.service` as the unit's
   targets, which 3.2 replaced. Done when: `AGENTS.md` describes the unit as
