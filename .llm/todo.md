@@ -20,12 +20,6 @@ Sizes: S <1 day, M 1–3 days, L 3+ days.
 
 ## Open steps
 
-- [ ] **3.3 declare the `jq` prerequisite in `install.sh`** (S). The script
-  reads `hyprctl activeworkspace -j` and needs `jq`, which the installer does
-  not check the way it checks `wayvnc` and `hyprctl`. Done when: a missing
-  `jq` fails the install with the same message shape and `bash -n` +
-  `shellcheck` are clean.
-
 - [ ] **3.4 reconcile the README** (S). The README still describes the legacy
   dispatch calls, the pre-0.56 focus-stealing lifecycle, and the
   `graphical.target` unit. Done when: it matches the script and unit as
