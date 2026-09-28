@@ -20,11 +20,6 @@ Sizes: S <1 day, M 1–3 days, L 3+ days.
 
 ## Open steps
 
-- [ ] **3.4 reconcile the README** (S). The README still describes the legacy
-  dispatch calls, the pre-0.56 focus-stealing lifecycle, and the
-  `graphical.target` unit. Done when: it matches the script and unit as
-  landed by 3.1/3.2.
-
 - [ ] **3.5 reconcile `service.md`** (S). The domain notes still document
   `WantedBy=graphical.target`, `After=hyprland.service`, and a lifecycle that
   focuses the headless monitor before serving. Done when: the unit targets
